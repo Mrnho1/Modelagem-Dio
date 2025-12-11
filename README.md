@@ -9,7 +9,7 @@ Este projeto contém o modelo e o script SQL de um banco de dados para um sistem
 O banco possui as seguintes tabelas:
 
 ### `clients` `product` `orders` `payments` `productOrder` `productStorage` `supplier` 
-### `seller` `productSeller` `storageLocation` `productSupplier`
+### `seller` `productSeller` `storageLocation` `productSupplier` `delivery`
 
 ## Tecnologias Utilizadas
 
