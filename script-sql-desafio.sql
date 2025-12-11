@@ -144,6 +144,18 @@ CREATE TABLE productSupplier (
       ON DELETE CASCADE
 );
 
+-- criando a tabela delivery
+CREATE TABLE delivery (
+    idDelivery INT AUTO_INCREMENT PRIMARY KEY,
+    idOrder INT NOT NULL,
+    trackingCode VARCHAR(50),
+    deliveryStatus ENUM('Preparando', 'Enviado', 'Em trânsito', 'Entregue', 'Cancelado') DEFAULT 'Preparando',
+    deliveryDate DATETIME,
+    constraint fk_delivery_order foreign key (idOrder) references orders(idOrder)
+        on update cascade 
+        on delete cascade
+);
+
 
 -- INSERINDO DADOS NAS TABELAS
 
@@ -220,13 +232,17 @@ INSERT INTO productSeller (idPseller, idPproduct, prodQuantity) VALUES
     (1, 6, 80),
     (2, 7, 10);
 
--- payments (exemplo)
+-- payments
 INSERT INTO payments (idClient, typePayment, limitAvailable) VALUES
     (1,'Cartão',5000),
     (2,'Boleto',NULL),
     (3,'Cartão',3000);
 
-
+-- delivery
+INSERT INTO delivery (idOrder, trackingCode, deliveryStatus, deliveryDate) VALUES
+    (1, 'BR123ABC', 'Enviado', NOW()),
+    (2, 'BR789XYZ', 'Preparando', NULL),
+    (3, 'BR555DEF', 'Em trânsito', NOW());
 
 
 
@@ -272,6 +288,19 @@ FROM productSupplier ps
 JOIN product p ON ps.idPsProduct = p.idProduct
 JOIN supplier sup ON ps.idPsSupplier = sup.idSupplier
 ORDER BY sup.SocialName, p.Pname;
+
+-- clientes com entregas atrasadas
+SELECT 
+    c.Fname,
+    c.Lname,
+    d.trackingCode,
+    d.deliveryStatus,
+    d.deliveryDate
+FROM delivery d
+JOIN orders o ON d.idOrder = o.idOrder
+JOIN clients c ON o.idOrderClient = c.idClient
+WHERE d.deliveryStatus = 'Em trânsito'
+  AND d.deliveryDate < DATE_SUB(NOW(), INTERVAL 7 DAY);
 
 -- relação de nomes dos fornecedores e nomes dos produtos
 SELECT sup.SocialName AS fornecedor,
@@ -325,7 +354,7 @@ WHERE p.idProduct = 1;
 
 
 
-
+show tables;
 
 
 
